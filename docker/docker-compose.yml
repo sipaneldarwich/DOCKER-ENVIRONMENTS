@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+  nginx_default:
+    container_name: nginx_default
+    build: ./nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ../src:/var/www
+    links:
+      - php_default
+  php_default:
+    container_name: php_default
+    build: ./php
+    working_dir: /var/www
+    volumes:
+      - ../src:/var/www
+  db:
+    container_name: mysql
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: devpass
+      MYSQL_DATABASE: db
+
+  adminer:
+    container_name: adminer
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080

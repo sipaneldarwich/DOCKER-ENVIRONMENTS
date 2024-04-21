@@ -1,7 +1,8 @@
 version: "3.9"
+name: projectname
 services:
-  nginx_default:
-    container_name: nginx_default
+  projectname_nginx_default:
+    container_name: projectname_nginx_default
     build: ./nginx
     ports:
       - 80:80
@@ -9,25 +10,25 @@ services:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ../src:/var/www
     links:
-      - php_default
-  php_default:
-    container_name: php_default
+      - projectname_php_default
+  projectname_php_default:
+    container_name: projectname_php_default
     build: ./php
     working_dir: /var/www
     volumes:
       - ../src:/var/www
-  db:
-    container_name: mysql
+  projectname_db:
+    container_name: projectname_db
     image: mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: user
       MYSQL_PASSWORD: devpass
-      MYSQL_DATABASE: db
+      MYSQL_DATABASE: marktplatz
     ports:
         - "3306:3306"
-  adminer:
-    container_name: adminer
+  projectname_adminer:
+    container_name: projectname_adminer
     image: adminer
     restart: always
     ports:

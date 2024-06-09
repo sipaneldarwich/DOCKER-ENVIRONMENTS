@@ -1,0 +1,29 @@
+version: "3.9"
+name: world_print_market
+services:
+  wpm_php:
+    container_name: wpm_php
+    build: ./php
+    ports:
+      - 80:80
+    working_dir: /var/www/html
+    volumes:
+      - ../.:/var/www/html
+      - ./php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ./php/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
+  wpm_db:
+    container_name: wpm_db
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: devpass
+      MYSQL_DATABASE: marktplatz
+    ports:
+        - "3306:3306"
+  wpm_adminer:
+    container_name: wpm_adminer
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080

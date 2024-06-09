@@ -1,0 +1,30 @@
+# Image and version
+FROM php:7.4-apache
+
+RUN apt-get update
+RUN apt install -y zip
+RUN apt install -y git
+
+# Call PHP images script `docker-php-ext-install` and install language extensions
+RUN docker-php-ext-install pdo mysqli pdo_mysql
+
+# install xdebug
+RUN pecl install xdebug-3.1.5 \
+    && docker-php-ext-enable xdebug
+
+# PHP GD library for dealing with images
+RUN apt-get install -y libjpeg62-turbo-dev libpng-dev libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
+
+# copy the Composer PHAR from the Composer image into the PHP image
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+COPY php.ini /usr/local/etc/php/
+COPY apache2.conf /etc/apache2/apache2.conf
+COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
+
+# Enable apache htaccess rewrite module
+RUN a2enmod rewrite
+
+RUN chmod -R 777 .
